@@ -1,12 +1,14 @@
 {
   "manifest_version": 2,
-  "name": "Esbuild-React-Extension",
+  "name": "Kohort Browser Extension",
   "version": "0.1.0",
-  "author": "Marton Lederer",
-  "description": "An example react-typescript extension with esbuild",
+  "author": "Oliver Switzer",
+  "description": "TBD",
   "permissions": [],
   "background": {
-    "scripts": ["build/background.js"]
+    "scripts": [
+      "build/background.js"
+    ]
   },
   "icons": {
     "192": "logo192.png",
@@ -20,11 +22,18 @@
     "default_title": "Popup",
     "default_popup": "popup.html"
   },
-  "web_accessible_resources": ["build/injected.js"],
+  "web_accessible_resources": [
+    "build/injected.js"
+  ],
   "content_scripts": [
     {
-      "matches": ["file://*/*", "http://*/*", "https://*/*"],
-      "js": ["build/content.js"],
+      "matches": [
+        "http://www.pivotaltracker.com/n/projects*",
+        "https://www.pivotaltracker.com/n/projects*"
+      ],
+      "js": [
+        "build/content.js"
+      ],
       "run_at": "document_end"
     }
   ]
