@@ -4,11 +4,9 @@
   "version": "0.1.0",
   "author": "Oliver Switzer",
   "description": "TBD",
-  "permissions": [],
+  "permissions": ["tabs"],
   "background": {
-    "scripts": [
-      "build/background.js"
-    ]
+    "scripts": ["build/background.js"]
   },
   "icons": {
     "192": "logo192.png",
@@ -22,18 +20,14 @@
     "default_title": "Popup",
     "default_popup": "popup.html"
   },
-  "web_accessible_resources": [
-    "build/injected.js"
-  ],
+  "web_accessible_resources": ["build/injected.js", "images/*", "*"],
   "content_scripts": [
     {
       "matches": [
         "http://www.pivotaltracker.com/n/projects*",
         "https://www.pivotaltracker.com/n/projects*"
       ],
-      "js": [
-        "build/content.js"
-      ],
+      "js": ["build/content.js"],
       "run_at": "document_end"
     }
   ]
