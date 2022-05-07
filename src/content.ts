@@ -10,18 +10,23 @@
 import DomObserver from "./dom_observer";
 import { renderKohortButton } from "./KohortButton";
 
-setTimeout(() => {
-  addKohortToStories();
-}, 1000);
-
+let pollTimeout: number;
 function addKohortToStories() {
-  const stories = [...document.querySelectorAll(".story")].map(
-    (el) => <HTMLElement>el
-  );
-  stories.forEach((storyEl) => {
-    addKohortButton(storyEl);
-  });
+  const stories = [...document.querySelectorAll(".story")];
+
+  if (stories.length > 0) {
+    clearTimeout(pollTimeout);
+    stories
+      .map((el) => <HTMLElement>el)
+      .forEach((storyEl) => {
+        addKohortButton(storyEl);
+      });
+  } else {
+    pollTimeout = setTimeout(addKohortToStories, 100);
+  }
 }
+
+addKohortToStories();
 
 function addKohortButton(storyEl: HTMLElement) {
   const header = storyEl.querySelector("header");
