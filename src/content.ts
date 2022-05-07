@@ -28,15 +28,46 @@ setTimeout(() => {
       });
     }
   });
-}, 300);
+}, 1000);
+
+// enum Messages = {
+//   GET_ACTIVE_KOHORT_MEETING: "get_active_kohort_meeting"
+// };
+interface GetActiveKohortMeetingResponse {
+  organization_slug: string;
+  room_slug: string;
+}
 
 async function sendTopicToStandup() {
-  chrome.extension.sendMessage(
-    { type: "send_to_standup" },
-    function (results) {}
+  chrome.runtime.sendMessage(
+    { type: "get_active_kohort_meeting" },
+    function (resp: GetActiveKohortMeetingResponse | null) {
+      if (resp) {
+        console.log(resp);
+      } else {
+        console.warn("no active kohort meeting");
+      }
+    }
   );
 }
 
+async function import_topic(
+  organization_slug: string,
+  meeting_slug: string,
+  content: string
+) {
+  await fetch("https://localhost:4001/api/v1/import_topic", {
+    method: "POST",
+    headers: new Headers({
+      "Content-Type": "text/plain"
+    }),
+    body: JSON.stringify({
+      organization: organization_slug,
+      meeting: meeting_slug,
+      content: content
+    })
+  });
+}
 export {};
 // function addScriptToWindow(scriptLocation: string) {
 //   try {

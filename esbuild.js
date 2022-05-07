@@ -6,7 +6,8 @@ esbuild
       "./src/background.ts",
       "./src/content.ts",
       "./src/popup.tsx",
-      "./src/injected.ts"
+      "./src/injected.ts",
+      "./src/kohort_content.ts"
     ],
     bundle: true,
     minify: false,

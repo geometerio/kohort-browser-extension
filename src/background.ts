@@ -8,37 +8,53 @@
  * https://developer.chrome.com/docs/extensions/mv2/background_pages/
  */
 
-console.log("background script");
+chrome.runtime.onMessage.addListener(async function (
+  request,
+  sender,
+  sendResponse
+) {
+  if (request.type == "get_active_kohort_meeting") {
+    chrome.tabs.query(
+      { url: "https://localhost:4001/*" },
+      function (tabs: chrome.tabs.Tab[]) {
+        if (tabs.length == 0) {
+          sendResponse("no active tab");
+          return;
+        }
+        if (!tabs[0].url) {
+          sendResponse("no url");
+          return;
+        }
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  chrome.tabs.query({ url: "https://localhost:4001/*" }, (results) => {
-    if (results.length == 0) {
-      sendResponse("no active tab");
-      return;
-    }
-    if (!results[0].url) {
-      sendResponse("no url");
-      return;
-    }
+        console.log("found tab: ", tabs[0]);
 
-    const kohortUrl = new URL(results[0].url);
-    const kohortUrlParts = kohortUrl.pathname.match(
-      /^\/([a-zA-Z0-9\-_]+)\/([a-zA-Z0-9\-_]+)$/
+        chrome.scripting.executeScript({
+          target: { tabId: tabs[0].id },
+          function: (msg) => console.log(msg),
+          args: ["Hello from tracker"]
+        });
+        chrome.tabs.sendMessage(
+          tabs[0].id || 0,
+          { greeting: "hello" },
+          function (response) {
+            console.log("response from Kohort: ", response);
+          }
+        );
+      }
     );
-    if (kohortUrlParts) {
-      fetch("https://localhost:4001/api/v1/import_topic", {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "text/plain"
-        }),
-        body: JSON.stringify({
-          organization: kohortUrlParts[1],
-          meeting: kohortUrlParts[2],
-          content: "hey from tracker"
-        })
-      });
-    }
-  });
-  sendResponse("WTF");
+  }
+
+  // const kohortUrl = new URL(results[0].url);
+  // const kohortUrlParts = kohortUrl.pathname.match(
+  //   /^\/([a-zA-Z0-9\-_]+)\/([a-zA-Z0-9\-_]+)$/
+  // );
+  // console.log(kohortUrl);
+  // console.log(kohortUrlParts);
+  // if (kohortUrlParts) {
+  //   sendResponse({
+  //     organization_slug: kohortUrlParts[0],
+  //     meeting_slug: kohortUrlParts[1]
+  //   });
+  // }
 });
 export {};
