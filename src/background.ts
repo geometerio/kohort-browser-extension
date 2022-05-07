@@ -18,7 +18,7 @@ chrome.runtime.onMessage.addListener(async function (
       { url: "https://localhost:4001/*" },
       function (tabs: chrome.tabs.Tab[]) {
         if (tabs.length == 0) {
-          sendResponse("no active tab");
+          sendResponse("no active kohort tab");
           return;
         }
         if (!tabs[0].url) {
@@ -30,16 +30,21 @@ chrome.runtime.onMessage.addListener(async function (
 
         chrome.scripting.executeScript({
           target: { tabId: tabs[0].id },
-          function: (msg) => console.log(msg),
-          args: ["Hello from tracker"]
+          function: (note_name: string) => {
+            const event = new CustomEvent("create_note", {
+              detail: { note_name: note_name }
+            });
+            document.dispatchEvent(event);
+          },
+          args: [request.payload.story_name]
         });
-        chrome.tabs.sendMessage(
-          tabs[0].id || 0,
-          { greeting: "hello" },
-          function (response) {
-            console.log("response from Kohort: ", response);
-          }
-        );
+        // chrome.tabs.sendMessage(
+        //   tabs[0].id || 0,
+        //   { greeting: "hello" },
+        //   function (response) {
+        //     console.log("response from Kohort: ", response);
+        //   }
+        // );
       }
     );
   }

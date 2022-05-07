@@ -24,7 +24,7 @@ setTimeout(() => {
     if (header) {
       header.appendChild(renderContainer);
       renderKohortButton(renderContainer, () => {
-        sendTopicToStandup();
+        sendTopicToStandup(header.innerText);
       });
     }
   });
@@ -38,9 +38,9 @@ interface GetActiveKohortMeetingResponse {
   room_slug: string;
 }
 
-async function sendTopicToStandup() {
+async function sendTopicToStandup(story_name: string) {
   chrome.runtime.sendMessage(
-    { type: "get_active_kohort_meeting" },
+    { type: "get_active_kohort_meeting", payload: { story_name } },
     function (resp: GetActiveKohortMeetingResponse | null) {
       if (resp) {
         console.log(resp);
