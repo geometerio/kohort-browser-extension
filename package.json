@@ -4,7 +4,9 @@
     "fmt": "prettier --write .",
     "fmt:check": "prettier --check ."
   },
-  "gitHooks": {},
+  "gitHooks": {
+    "pre-commit": "prettier --write . && git add -A"
+  },
   "dependencies": {
     "esbuild-envfile-plugin": "^1.0.2"
   },
