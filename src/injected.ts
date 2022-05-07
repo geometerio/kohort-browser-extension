@@ -7,3 +7,4 @@
  * It is useful for modifying the DOM of different
  * tabs easily
  */
+export {};
