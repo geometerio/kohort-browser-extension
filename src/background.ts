@@ -8,28 +8,30 @@
  * https://developer.chrome.com/docs/extensions/mv2/background_pages/
  */
 
+// @ts-ignore
+import { KOHORT_URL } from "env";
+
 chrome.runtime.onMessage.addListener(async function (
   request,
   sender,
   sendResponse
 ) {
-  if (request.type == "get_active_kohort_meeting") {
+  if (request.type == "create_kohort_topic") {
     chrome.tabs.query(
-      { url: "https://localhost:4001/*" },
+      { url: `${KOHORT_URL}/*` },
       function (tabs: chrome.tabs.Tab[]) {
-        if (tabs.length == 0) {
-          sendResponse("no active kohort tab");
-          return;
-        }
-        if (!tabs[0].url) {
-          sendResponse("no url");
+        const activeMeetingTab = tabs.find((t) => {
+          return t.url && isActiveKohortMeeting(new URL(t.url));
+        });
+
+        if (!activeMeetingTab || !activeMeetingTab.id) {
+          sendResponse("no active kohort meeting");
           return;
         }
 
-        console.log("found tab: ", tabs[0]);
-
+        // @ts-ignore
         chrome.scripting.executeScript({
-          target: { tabId: tabs[0].id },
+          target: { tabId: activeMeetingTab.id },
           function: (note_name: string) => {
             const event = new CustomEvent("create_note", {
               detail: { note_name: note_name }
@@ -38,28 +40,14 @@ chrome.runtime.onMessage.addListener(async function (
           },
           args: [request.payload.story_name]
         });
-        // chrome.tabs.sendMessage(
-        //   tabs[0].id || 0,
-        //   { greeting: "hello" },
-        //   function (response) {
-        //     console.log("response from Kohort: ", response);
-        //   }
-        // );
       }
     );
   }
 
-  // const kohortUrl = new URL(results[0].url);
-  // const kohortUrlParts = kohortUrl.pathname.match(
-  //   /^\/([a-zA-Z0-9\-_]+)\/([a-zA-Z0-9\-_]+)$/
-  // );
-  // console.log(kohortUrl);
-  // console.log(kohortUrlParts);
-  // if (kohortUrlParts) {
-  //   sendResponse({
-  //     organization_slug: kohortUrlParts[0],
-  //     meeting_slug: kohortUrlParts[1]
-  //   });
-  // }
+  // Returning true indicates to keep port open long enough that message is received by content script
+  return true;
 });
-export {};
+
+function isActiveKohortMeeting(url: URL): boolean {
+  return !!url.pathname.match(/^\/([a-zA-Z0-9\-_]+)\/([a-zA-Z0-9\-_]+)$/);
+}
