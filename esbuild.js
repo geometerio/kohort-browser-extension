@@ -1,7 +1,9 @@
 const esbuild = require("esbuild");
+const envFilePlugin = require("esbuild-envfile-plugin");
 
 esbuild
   .build({
+    plugins: [envFilePlugin],
     entryPoints: [
       "./src/background.ts",
       "./src/content.ts",

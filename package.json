@@ -4,10 +4,10 @@
     "fmt": "prettier --write .",
     "fmt:check": "prettier --check ."
   },
-  "gitHooks": {
-    "pre-commit": "prettier --write . && git add -A"
+  "gitHooks": {},
+  "dependencies": {
+    "esbuild-envfile-plugin": "^1.0.2"
   },
-  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.12.13",
     "@types/chrome": "^0.0.129",
