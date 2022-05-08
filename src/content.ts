@@ -48,7 +48,7 @@ new DomObserver().onElementMutation((el: HTMLElement) => {
 
 async function sendTopicToStandup(story_name: string) {
   chrome.runtime.sendMessage({
-    type: "create_kohort_topic",
+    type: "create_and_start_kohort_topic",
     payload: { story_name }
   });
 }

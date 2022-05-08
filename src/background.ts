@@ -16,7 +16,7 @@ chrome.runtime.onMessage.addListener(async function (
   sender,
   sendResponse
 ) {
-  if (request.type == "create_kohort_topic") {
+  if (request.type == "create_and_start_kohort_topic") {
     chrome.tabs.query(
       { url: `${KOHORT_URL}/*` },
       function (tabs: chrome.tabs.Tab[]) {
@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener(async function (
         chrome.scripting.executeScript({
           target: { tabId: activeMeetingTab.id },
           function: (note_name: string) => {
-            const event = new CustomEvent("create_note", {
+            const event = new CustomEvent("create_and_start_note", {
               detail: { note_name: note_name }
             });
             document.dispatchEvent(event);
